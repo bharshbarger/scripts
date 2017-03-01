@@ -20,13 +20,6 @@ import ssl
 import math
 
 
-
-
-#iptables –A OUTPUT –p tcp –s 192.168.56.101 --tcp-flags RST RST –j DROP
-
-
-
-
 def main():
 
 	parser = argparse.ArgumentParser()
