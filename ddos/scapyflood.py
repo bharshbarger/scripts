@@ -20,7 +20,11 @@ import ssl
 import math
 
 
-#use requests response time to auto tune dos---see hss.py
+
+
+#iptables –A OUTPUT –p tcp –s 192.168.56.101 --tcp-flags RST RST –j DROP
+
+
 
 
 def main():
@@ -33,6 +37,8 @@ def main():
 	parser.add_argument('-u', '--url', nargs = 1, help = 'The URL you want to test.')
 	parser.add_argument('-t', '--threshold', nargs = 1, help = 'The DoS acceptability threshold')
 	parser.add_argument('-v', '--verbose', help='enable verbosity', action = 'store_true')
+	parser.add_argument('-m', '--multiplier', nargs=1, help='Packet multiplier (how many packets to send per timing loop)')
+
 	args = parser.parse_args()
 
 	print args
@@ -41,6 +47,10 @@ def main():
 		parser.print_help()
 		sys.exit()
 
+	if args.multiplier is None:
+		multiplier=10
+	else:
+		multiplier=''.join(args.multiplier)
 
 
 	if args.ipdst is not None:
@@ -56,10 +66,7 @@ def main():
 	dstUrl = ''.join(args.url)
 
 
-	print dstPort
-
-
-
+	#print dstPort
 
 
 	while True:
@@ -99,7 +106,8 @@ def main():
 
 		#print 'sending packet with %s %s %s %s %s'%(srcIp,dstIp,srcPort,dstPort,payload)
 		#TCP packet scapy send
-		send(IP(src=srcIp, dst=dstIp) / TCP(sport=int(srcPort), dport=int(dstPort)) / payload )
+		send(IP(src=srcIp, dst=dstIp) / TCP(sport=int(srcPort), dport=int(dstPort)) / payload, count=int(multiplier))
+	
 
 
 		if float(elapsedTime) <= float(''.join(args.threshold)):
