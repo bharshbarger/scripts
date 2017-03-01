@@ -7,7 +7,8 @@
 
 #By @arbitrary_code
 
-#from scapy.all import *
+#yikes, clean this up!
+from scapy import all
 
 import argparse
 import random
@@ -89,6 +90,11 @@ def main():
 		print 'Target web server '+ str(dstIp)+' responded with HTTP' +str(response.status_code)+' in '+"{:<1}".format(str(elapsedTime)) +'ms'
 
 
+		payload = 'foo'
+		#TCP packet scapy send
+		send(IP(src=srcIp, dst=dstIp) / TCP(sport=srcPort, dport=dstPort) / payload )
+
+
 		if elapsedTime <= ''.join(args.threshold):
 			print 'under DoS threshold'
 		else:
@@ -97,9 +103,9 @@ def main():
 			print 'elapsed time is: %s' % elapsedTime
 			print ''.join(args.threshold)
 			delay = int(elapsedTime.split('.')[0]) - int(''.join(args.threshold))
-			print str(delay)
-			time.sleep(delay)
-			print 'reducing by %s' % delay
+			print 'DoS threshold of %s met, reducing by %s' % (''.join(args.threshold), str(delay))
+			time.sleep(delay/1000)
+
 
 
 
