@@ -8,8 +8,17 @@ set -f          # disable globbing
 
 while IFS= read -r line; do
     #set up a case here for cmdline switch?
+    
+    #sslscan an ip
     #sslscan "$line"
+    
+    #curl an ip 
     #curl --get --insecure --proxy 127.0.0.1:8080 $line
+    
+    #run enum4linux
     #enum4linux $line
+    
+    #test for tcp timestamps
+    hping3 -S -c 2 $line -p 445 --tcp-timestamp
     wait
 done < "$1" 
