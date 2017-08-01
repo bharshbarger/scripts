@@ -12,7 +12,7 @@ while IFS= read -r line; do
     #sslscan an ip
     #sslscan "$line"
     
-    #curl an ip 
+    #curl an ip (or list of urls) and intercept with a local proxy like burp
     #curl --get --insecure --proxy 127.0.0.1:8080 $line
     
     #run enum4linux
