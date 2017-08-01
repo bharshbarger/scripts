@@ -19,6 +19,10 @@ while IFS= read -r line; do
     #enum4linux $line
     
     #test for tcp timestamps
-    hping3 -S -c 2 $line -p 445 --tcp-timestamp
+    #hping3 -S -c 2 $line -p 445 --tcp-timestamp
+    
+    #Responder's RunFinger.py with greppable output
+    #./RunFinger.py -g -i $line
+    
     wait
 done < "$1" 
