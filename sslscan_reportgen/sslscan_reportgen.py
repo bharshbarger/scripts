@@ -3,6 +3,7 @@
 #script to parse output from sslscan and find common issues, then dump into a docx
 
 #todo: automatically sort IP addresses
+#todo: remove items from report if not found
 
 try:
     import argparse, os, re, sys
@@ -141,7 +142,7 @@ class sslscan_beautifier():
             font.name = 'Arial'
             font.size = Pt(20)
             runParagraph = paragraph.add_run('\n')
-            if self.args.verbose is True:print('Added naughty host: {}'.format(key))
+            if self.args.verbose is True:print('Added host: {}'.format(key))
             
             
             #if this host had RC4, print the header
