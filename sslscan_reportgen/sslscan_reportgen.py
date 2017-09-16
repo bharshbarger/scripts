@@ -236,6 +236,9 @@ class sslscan_beautifier():
         print('********Weak Key Size********')
         for k,v in self.weakbits_dict.items():
             print('{}'.format(k))
+        print('********Heartbleed Hosts********')
+        for k,v in self.heartbleed_dict.items():
+            print('{}'.format(k))
 
 
 def main():
