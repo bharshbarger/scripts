@@ -34,8 +34,11 @@ class sslscan_beautifier():
         self.des_dict = {}
         self.tls10_dict = {}
         self.weakbits_dict = {}
-        self.result_dictionary = {}
         self.heartbleed_dict = {}
+        self.md5_dict = {}
+
+
+        self.result_dictionary = {}
 
         #dump reports here
         self.report_dir = './reports/'
@@ -96,6 +99,9 @@ class sslscan_beautifier():
         
                 if 'SSLv3' in line:
                     self.sslv3_dict[key]=line
+
+                if 'MD5' in line:
+                    self.md5_dict[key]=line
                 
                 if 'DES' in line:
                     self.des_dict[key]=line
@@ -215,6 +221,18 @@ class sslscan_beautifier():
                 font.size = Pt(11)
                 runParagraph = paragraph.add_run('\n')
 
+            runParagraph = paragraph.add_run('MD5 Supported \n')
+            font=runParagraph.font
+            font.name = 'Arial'
+            font.size = Pt(16)
+            #enumerate the lines were rc4 was found
+            for i,r, in self.md5_dict.items():
+                runParagraph = paragraph.add_run(r)
+                font=runParagraph.font
+                font.name = 'Arial'
+                font.size = Pt(11)
+                runParagraph = paragraph.add_run('\n')
+
         
         
         document.save('{}sslscan_{}.docx'.format(self.report_dir, self.args.client))
@@ -239,6 +257,10 @@ class sslscan_beautifier():
         print('********Heartbleed Hosts********')
         for k,v in self.heartbleed_dict.items():
             print('{}'.format(k))
+        print('********MD5 Hosts********')
+        for k,v in self.md5_dict.items():
+            print('{}'.format(k))
+
 
 
 def main():
