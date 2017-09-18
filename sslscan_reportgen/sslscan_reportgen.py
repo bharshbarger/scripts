@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-
 """script to parse output from sslscan and find common issues, then dump into a docx"""
-
-#todo: strip colorized output
-
 try:
     import argparse
     import docx
