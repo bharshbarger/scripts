@@ -2,8 +2,6 @@
 
 #script to parse output from sslscan and find common issues, then dump into a docx
 
-#todo: automatically sort IP addresses
-
 try:
     import argparse, os, re, sys, time
     import docx
@@ -116,7 +114,7 @@ class sslscan_beautifier():
         paragraph = document.add_paragraph()
         #start by printing the ip address in 20pt arial
         #for each ip parsed out, look thru the results and add them to the report
-        for key,val in self.result_dictionary.items():
+        for key,val in sorted(self.result_dictionary.items()):
             runParagraph = paragraph.add_run(key)
             font=runParagraph.font
             font.name = 'Arial'
@@ -234,35 +232,35 @@ class sslscan_beautifier():
     def print_summary(self):
         if self.rc4_dict:
             print('********RC4 Hosts********')
-            for k,v in self.rc4_dict.items():
+            for k,v in sorted(self.rc4_dict.items()):
                 print('{}'.format(k))
         if self.sslv2_dict:
             print('********SSLv2 Hosts********')
-            for k,v in self.sslv2_dict.items():
+            for k,v in sorted(self.sslv2_dict.items()):
                 print('{}'.format(k))
         if self.sslv3_dict:
             print('********SSLv3 Hosts********')
-            for k,v in self.sslv3_dict.items():
+            for k,v in sorted(self.sslv3_dict.items()):
                 print('{}'.format(k))
         if self.des_dict:
             print('********DES Hosts********')
-            for k,v in self.des_dict.items():
+            for k,v in sorted(self.des_dict.items()):
                 print('{}'.format(k))
         if self.tls10_dict:
             print('********TLS v1.0 Hosts********')
-            for k,v in self.tls10_dict.items():
+            for k,v in sorted(self.tls10_dict.items()):
                 print('{}'.format(k))
         if self.weakbits_dict:
             print('********Weak Key Size********')
-            for k,v in self.weakbits_dict.items():
+            for k,v in sorted(self.weakbits_dict.items()):
                 print('{}'.format(k))
         if self.heartbleed_dict:
             print('********Heartbleed Hosts********')
-            for k,v in self.heartbleed_dict.items():
+            for k,v in sorted(self.heartbleed_dict.items()):
                 print('{}'.format(k))
         if self.md5_dict:
             print('********MD5 Hosts********')
-            for k,v in self.md5_dict.items():
+            for k,v in sorted(self.md5_dict.items()):
                 print('{}'.format(k))
 
     def end(self):
