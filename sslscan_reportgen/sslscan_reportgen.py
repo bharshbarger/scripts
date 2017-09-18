@@ -38,7 +38,7 @@ class sslscan_beautifier():
         #store sslscan host results here for parsing key, val is ip, results
         self.result_dictionary = {}
         #dump reports here
-        self.report_dir = './reports/'
+        self.report_dir = './sslscan_reports/'
         #check for report directory, make it if not found
         if not os.path.exists(self.report_dir):
             os.makedirs(self.report_dir)
