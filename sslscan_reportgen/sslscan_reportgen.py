@@ -68,10 +68,14 @@ class sslscan_beautifier():
 
     def read_file(self):
         """open targets file, splits on ip and puts ip and the result into a dictionary"""
+        #strip out ansi control chars (sometimes these appear in colorized output)
+        #https://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
+        ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
         try:
             with open(self.args.file) as f:
                 #use a regex to split the file into sections, delimited by the word Testing
-                for i, result in enumerate(re.findall('Testing(.*?)Testing', f.read(), re.S)):
+                #also use a regex to strip control chars out as the file is iterated
+                for i, result in enumerate(re.findall('Testing(.*?)Testing', ansi_escape.sub('', f.read()), re.S)):
                     #look for the first line from the Testing
                     # BUG for some reason the regex removes 'testing' from the result
                     if 'SSL server' in result:
