@@ -3,7 +3,6 @@
 #script to parse output from sslscan and find common issues, then dump into a docx
 
 #todo: automatically sort IP addresses
-#todo: remove items from report if not found
 
 try:
     import argparse, os, re, sys, time
