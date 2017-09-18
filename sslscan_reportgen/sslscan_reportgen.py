@@ -235,35 +235,35 @@ class sslscan_beautifier():
 
     def print_summary(self):
         if self.rc4_dict:
-            print('********RC4 Hosts********')
+            print('\n********RC4 Hosts********')
             for k,v in sorted(self.rc4_dict.items()):
                 print('{}'.format(k))
         if self.sslv2_dict:
-            print('********SSLv2 Hosts********')
+            print('\n********SSLv2 Hosts********')
             for k,v in sorted(self.sslv2_dict.items()):
                 print('{}'.format(k))
         if self.sslv3_dict:
-            print('********SSLv3 Hosts********')
+            print('\n********SSLv3 Hosts********')
             for k,v in sorted(self.sslv3_dict.items()):
                 print('{}'.format(k))
         if self.des_dict:
-            print('********DES Hosts********')
+            print('\n********DES Hosts********')
             for k,v in sorted(self.des_dict.items()):
                 print('{}'.format(k))
         if self.tls10_dict:
-            print('********TLS v1.0 Hosts********')
+            print('\n********TLS v1.0 Hosts********')
             for k,v in sorted(self.tls10_dict.items()):
                 print('{}'.format(k))
         if self.weakbits_dict:
-            print('********Weak Key Size********')
+            print('\n********Weak Key Size********')
             for k,v in sorted(self.weakbits_dict.items()):
                 print('{}'.format(k))
         if self.heartbleed_dict:
-            print('********Heartbleed Hosts********')
+            print('\n********Heartbleed Hosts********')
             for k,v in sorted(self.heartbleed_dict.items()):
                 print('{}'.format(k))
         if self.md5_dict:
-            print('********MD5 Hosts********')
+            print('\n********MD5 Hosts********')
             for k,v in sorted(self.md5_dict.items()):
                 print('{}'.format(k))
 
