@@ -11,7 +11,7 @@ try:
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.oxml.shared import OxmlElement, qn
 except Exception as e:
-    print('\n[!] Import(s) failed!: ' + str(e))
+    print('\n[!] Import(s) failed!: {}'.format(e))
 
 class sslscan_beautifier():
     def __init__(self, args):
@@ -63,14 +63,17 @@ class sslscan_beautifier():
 
     def read_file(self):
         #open targets file
-        with open(self.args.file) as f:
-            #use a regex to split the file into sections, delimited by the word Testing
-            for i, result in enumerate(re.findall('Testing(.*?)Testing', f.read(), re.S)):
-                #look for the first line from the Testing
-                # BUG for some reason the regex removes 'testing' from the result
-                if 'SSL server' in result:
-                    #set up a dictionary key of ip, val of the result
-                    self.result_dictionary[re.findall(r'(?:\d{1,3}\.)+(?:\d{1,3})', result)[0]] = result
+        try:
+            with open(self.args.file) as f:
+                #use a regex to split the file into sections, delimited by the word Testing
+                for i, result in enumerate(re.findall('Testing(.*?)Testing', f.read(), re.S)):
+                    #look for the first line from the Testing
+                    # BUG for some reason the regex removes 'testing' from the result
+                    if 'SSL server' in result:
+                        #set up a dictionary key of ip, val of the result
+                        self.result_dictionary[re.findall(r'(?:\d{1,3}\.)+(?:\d{1,3})', result)[0]] = result
+        except Exception as e:
+            print('\n[!] Couldn\'t open file: {}'.format(e)) 
 
     #this will read thru result_dictionary and search for misconfiguraitons in the scan results
     def parse_dict(self):
@@ -103,7 +106,8 @@ class sslscan_beautifier():
     def gen_report(self):
         #create a document -- to use a template put the docx in the (), like (my_template.docx)
         document = docx.Document()
-        print ('\n**** Generating Report ****\n')
+        print ('\n**** Generating Report: ****')
+        print('**** {}sslscan_{}.docx ****\n'.format(self.report_dir, self.args.client))
         #optional header
         heading = document.add_heading(level=3)
         runHeading = heading.add_run('Hosts With Weak Transport Security')
@@ -264,7 +268,7 @@ class sslscan_beautifier():
                 print('{}'.format(k))
 
     def end(self):
-        print('Completed in {:.2f} seconds'.format(time.time() - self.start_time))
+        print('\nCompleted in {:.2f} seconds\n'.format(time.time() - self.start_time))
 
 def main():
     #gather options
