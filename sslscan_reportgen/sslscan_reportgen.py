@@ -2,6 +2,8 @@
 
 """script to parse output from sslscan and find common issues, then dump into a docx"""
 
+#todo: strip colorized output
+
 try:
     import argparse
     import docx
@@ -54,10 +56,12 @@ class sslscan_beautifier():
         #make sure -f is supplied
         if not self.args.file:
             print ('No file supplied')
+            parser.print_help()
             sys.exit(0)
         #make sure -c is set for file naming purposes
         if not self.args.client:
             print ('Please provide a client name')
+            parser.print_help()
             sys.exit(0)
         #clean up client name, remove spaces and stuff
         self.args.client = ''.join(e for e in self.args.client if e.isalnum())
