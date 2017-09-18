@@ -23,7 +23,7 @@ class sslscan_beautifier():
         #verbosity explicitly off
         self.verbose = False
         #version
-        self.version = 'beta.09_15_2017'
+        self.version = 'beta.09_18_2017'
         #file to read
         self.ssl_file = None
         #misconfiguration dictionaries
