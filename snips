@@ -1,0 +1,3 @@
+# get IPs from runfinger output
+
+cat runfinger.out |grep for|awk '{print $4}'|sed 's/...$//'
