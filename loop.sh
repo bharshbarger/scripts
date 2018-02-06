@@ -2,6 +2,10 @@
 #based on https://unix.stackexchange.com/questions/7011/how-to-loop-over-the-lines-of-a-file
 #usage is ./sslscan.sh <inputfile>
 #can pipe output wherever
+
+#expand cidr with nmap
+#nmap -sL -n -iL $file | grep 'Nmap scan report for' | cut -f 5 -d ' '
+
 #!/bin/bash
 IFS=$'\n'       # make newlines the only separator
 set -f          # disable globbing
