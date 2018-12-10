@@ -28,5 +28,8 @@ while IFS= read -r line; do
     #Responder's RunFinger.py with greppable output
     #./RunFinger.py -g -i $line
     
+    #chromium web screenshot
+    #chromium --headless --disable-gpu --screenshot https://$line
+    
     wait
 done < "$1" 
