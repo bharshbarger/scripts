@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 """script to parse output from sslscan and find common issues, then dump into a docx"""
-try:
-    import argparse
-    import docx
-    import os
-    import re
-    import sys
-    import time
-    from docx.shared import Pt
-    from docx.shared import RGBColor
-except Exception as e:
-    print('\n[!] Import(s) failed!: {}'.format(e))
+
+import argparse
+import docx
+import os
+import re
+import sys
+import time
+from docx.shared import Pt
+from docx.shared import RGBColor
+
 
 class sslscan_beautifier():
     """a class is probably unnecessary for this script"""
