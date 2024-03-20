@@ -20,6 +20,6 @@ echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 p10k configure
 # replace plugins=(git) with
 # plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete)
-#untested sed
 
-#sed 's/^plugins=(\(.*\)/plugins=(zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete \1/' .zshrc
+
+sed 's/^plugins=(\(.*\)/plugins=(zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete \1/' .zshrc
